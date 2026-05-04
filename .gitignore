@@ -1,0 +1,25 @@
+# STM32CubeIDE / Eclipse
+.project
+.cproject
+.mxproject
+*.launch
+.settings/
+
+# Build artifacts
+Debug/
+Release/
+*.o
+*.elf
+*.bin
+*.hex
+*.map
+*.su
+*.list
+
+# Python Scripts (like the one used to clean up comments)
+*.py
+__pycache__/
+
+# OS Generated
+.DS_Store
+Thumbs.db
