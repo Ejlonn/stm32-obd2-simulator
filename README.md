@@ -6,7 +6,7 @@ Sistem iki adet STM32 mikrokontrolcüden oluşmaktadır:
 1. **ECU Emulator:** Bir aracın motor kontrol ünitesini (ECU) simüle eder. Sensör verilerini (RPM, Hız, Sıcaklık) üretir ve ISO-TP (ISO 15765-2) standartlarında gelen tanılama isteklerine yanıt verir.
 2. **OBD Scanner:** Gerçek bir arıza tespit cihazı gibi çalışarak ECU'dan sensör verilerini, arıza kodlarını (DTC) ve araç kimlik numarasını (VIN) çeker; verileri OLED ekran üzerinde gösterir.
 
-## 🛠 Donanım Gereksinimleri
+## Donanım Gereksinimleri
 
 Proje tamamen gömülü donanım üzerinde çalışmak üzere tasarlanmıştır. Bu projeyi çalıştırmak için aşağıdaki bileşenlere ihtiyacınız vardır:
 
@@ -26,7 +26,7 @@ Proje tamamen gömülü donanım üzerinde çalışmak üzere tasarlanmıştır.
 | **SO (MISO)** | PA6 (SPI1_MISO) |
 | **SI (MOSI)** | PA7 (SPI1_MOSI) |
 | **SCK** | PA5 (SPI1_SCK) |
-| **INT** | PA0 (EXTI0) |
+| **INT** | PA0 (EXTI0 - Falling Edge) |
 
 | OLED Ekran | STM32F411RE (Scanner) |
 | :--- | :--- |
@@ -60,7 +60,7 @@ Bu repo, standart bir STM32CubeIDE Workspace formatındadır.
 
 1. **Repoyu Klonlayın:**
    ```bash
-   git clone <repo_url>
+   git clone https://github.com/Ejlonn/stm32-obd2-simulator.git
    ```
 2. **STM32CubeIDE ile Açın:**
    * STM32CubeIDE'yi açın.
@@ -90,7 +90,7 @@ The system consists of two STM32 microcontrollers:
 1. **ECU Emulator:** Simulates a vehicle's Engine Control Unit (ECU). It generates sensor data (RPM, Speed, Temperature) and responds to diagnostic requests coming in ISO-TP (ISO 15765-2) standards.
 2. **OBD Scanner:** Acts like a real diagnostic scanner tool; retrieves sensor data, diagnostic trouble codes (DTC), and vehicle identification number (VIN) from the ECU, displaying the data on an OLED screen.
 
-## 🛠 Hardware Requirements
+## Hardware Requirements
 
 The project is designed to run entirely on embedded hardware. To run this project, you need the following components:
 
@@ -110,7 +110,7 @@ The project is designed to run entirely on embedded hardware. To run this projec
 | **SO (MISO)** | PA6 (SPI1_MISO) |
 | **SI (MOSI)** | PA7 (SPI1_MOSI) |
 | **SCK** | PA5 (SPI1_SCK) |
-| **INT** | PA0 (EXTI0) |
+| **INT** | PA0 (EXTI0-Falling Edge) |
 
 | OLED Display | STM32F411RE (Scanner) |
 | :--- | :--- |
@@ -144,7 +144,7 @@ This repo is structured as a standard STM32CubeIDE Workspace.
 
 1. **Clone the Repo:**
    ```bash
-   git clone <repo_url>
+   git clone https://github.com/Ejlonn/stm32-obd2-simulator.git
    ```
 2. **Open with STM32CubeIDE:**
    * Open STM32CubeIDE.
