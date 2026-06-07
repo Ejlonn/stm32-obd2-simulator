@@ -78,6 +78,10 @@ extern "C" {
 #define ENABLE_OLED                 1
 #endif
 
+#ifndef ENABLE_CSV_LOGGING
+#define ENABLE_CSV_LOGGING          1
+#endif
+
 #define SENSOR_UPDATE_PERIOD_MS     100U
 
 #define SENSOR_RPM_NORMAL_MIN       800U

@@ -4,6 +4,7 @@
 #include "project_config.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "stm32f4xx_hal.h"
 #include <string.h>
 
 #define Q8(val)  ((int32_t)((val) * 256))
@@ -40,12 +41,7 @@ static const uint8_t s_gear_speed_factor[7] = {
 #define THERMAL_HEAT_RATE   2            
 #define THERMAL_COOL_RATE   4            
 
-#define SCENARIO_ACCEL_TICKS   270      
-#define SCENARIO_CRUISE_TICKS  50        
-#define SCENARIO_DECEL_TICKS   60        
-#define SCENARIO_IDLE_TICKS    30        
-#define SCENARIO_TOTAL_TICKS   (SCENARIO_ACCEL_TICKS + SCENARIO_CRUISE_TICKS + \
-                                SCENARIO_DECEL_TICKS + SCENARIO_IDLE_TICKS)
+
 
 #define FAULT_TARGET_RPM        Q8(600)
 #define FAULT_TARGET_COOLANT    Q8(118)
@@ -100,22 +96,19 @@ static int32_t compute_speed(int32_t rpm_q8, uint8_t gear)
     return rpm_int * (int32_t)s_gear_speed_factor[gear];
 }
 
-// Sürüş senaryosuna göre gaz durumunu belirle
-static bool scenario_get_throttle(uint32_t tick)
-{
-    
-    uint32_t phase = tick;
-    if (phase >= SCENARIO_TOTAL_TICKS) {
-        phase = SCENARIO_TOTAL_TICKS - 1;
-    }
+extern ADC_HandleTypeDef hadc1;
 
-    if (phase < SCENARIO_ACCEL_TICKS) {
-        return true;   
+// Potansiyometre ADC okuması (0 - 4095)
+static uint32_t get_potentiometer_value(void)
+{
+    HAL_ADC_Start(&hadc1);
+    if (HAL_ADC_PollForConversion(&hadc1, 10) == HAL_OK) {
+        uint32_t val = HAL_ADC_GetValue(&hadc1);
+        HAL_ADC_Stop(&hadc1);
+        return val;
     }
-    if (phase < SCENARIO_ACCEL_TICKS + SCENARIO_CRUISE_TICKS) {
-        return true;   
-    }
-    return false;      
+    HAL_ADC_Stop(&hadc1);
+    return 0;
 }
 
 // Termal modeli güncelle
@@ -153,7 +146,14 @@ static void update_drivetrain(void)
 {
     s_dt.scenario_tick++;
 
-    s_dt.throttle = scenario_get_throttle(s_dt.scenario_tick);
+    uint32_t adc_val = get_potentiometer_value();
+    uint32_t throttle_percent = (adc_val * 100) / 4095;
+
+    if (throttle_percent > 5) {
+        s_dt.throttle = true;
+    } else {
+        s_dt.throttle = false;
+    }
 
     if (s_dt.shift_state != SHIFT_NONE)
     {
@@ -175,8 +175,10 @@ static void update_drivetrain(void)
 
     if (s_dt.throttle)
     {
-        
-        s_dt.rpm += RPM_ACCEL_RATE;
+        // Dinamik ivmelenme (gaz pedalı tepkisi)
+        int32_t accel = (RPM_ACCEL_RATE * throttle_percent) / 100;
+        if (accel < Q8(5)) accel = Q8(5);
+        s_dt.rpm += accel;
     }
     else
     {

@@ -2,45 +2,58 @@
 // stm32f4xx_it.c - Interrupt Service Routines.
 /* USER CODE END Header */
 
+/* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f4xx_it.h"
-
+/* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "can_interface.h"
 #include "button_handler.h"
 /* USER CODE END Includes */
 
+/* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN TD */
 
 /* USER CODE END TD */
 
+/* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
 /* USER CODE END PD */
 
+/* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
 
 /* USER CODE END PM */
 
+/* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
 
+/* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
+/* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
 
+/* External variables --------------------------------------------------------*/
 extern TIM_HandleTypeDef htim4;
 
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
 
-// This function handles Non maskable interrupt.
+/******************************************************************************/
+/*           Cortex-M4 Processor Interruption and Exception Handlers          */
+/******************************************************************************/
+/**
+  * @brief This function handles Non maskable interrupt.
+  */
 void NMI_Handler(void)
 {
   /* USER CODE BEGIN NonMaskableInt_IRQn 0 */
@@ -53,7 +66,9 @@ void NMI_Handler(void)
   /* USER CODE END NonMaskableInt_IRQn 1 */
 }
 
-// This function handles Hard fault interrupt.
+/**
+  * @brief This function handles Hard fault interrupt.
+  */
 void HardFault_Handler(void)
 {
   /* USER CODE BEGIN HardFault_IRQn 0 */
@@ -66,7 +81,9 @@ void HardFault_Handler(void)
   }
 }
 
-// This function handles Memory management fault.
+/**
+  * @brief This function handles Memory management fault.
+  */
 void MemManage_Handler(void)
 {
   /* USER CODE BEGIN MemoryManagement_IRQn 0 */
@@ -79,7 +96,9 @@ void MemManage_Handler(void)
   }
 }
 
-// This function handles Pre-fetch fault, memory access fault.
+/**
+  * @brief This function handles Pre-fetch fault, memory access fault.
+  */
 void BusFault_Handler(void)
 {
   /* USER CODE BEGIN BusFault_IRQn 0 */
@@ -92,7 +111,9 @@ void BusFault_Handler(void)
   }
 }
 
-// This function handles Undefined instruction or illegal state.
+/**
+  * @brief This function handles Undefined instruction or illegal state.
+  */
 void UsageFault_Handler(void)
 {
   /* USER CODE BEGIN UsageFault_IRQn 0 */
@@ -105,7 +126,9 @@ void UsageFault_Handler(void)
   }
 }
 
-// This function handles Debug monitor.
+/**
+  * @brief This function handles Debug monitor.
+  */
 void DebugMon_Handler(void)
 {
   /* USER CODE BEGIN DebugMonitor_IRQn 0 */
@@ -116,19 +139,16 @@ void DebugMon_Handler(void)
   /* USER CODE END DebugMonitor_IRQn 1 */
 }
 
-// This function handles EXTI line0 interrupt.
-void EXTI0_IRQHandler(void)
-{
-  /* USER CODE BEGIN EXTI0_IRQn 0 */
+/******************************************************************************/
+/* STM32F4xx Peripheral Interrupt Handlers                                    */
+/* Add here the Interrupt Handlers for the used peripherals.                  */
+/* For the available peripheral interrupt handler names,                      */
+/* please refer to the startup file (startup_stm32f4xx.s).                    */
+/******************************************************************************/
 
-  /* USER CODE END EXTI0_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(MCP2515_INT_Pin);
-  /* USER CODE BEGIN EXTI0_IRQn 1 */
-
-  /* USER CODE END EXTI0_IRQn 1 */
-}
-
-// This function handles TIM4 global interrupt.
+/**
+  * @brief This function handles TIM4 global interrupt.
+  */
 void TIM4_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM4_IRQn 0 */
@@ -140,7 +160,9 @@ void TIM4_IRQHandler(void)
   /* USER CODE END TIM4_IRQn 1 */
 }
 
-// This function handles EXTI line[15:10] interrupts.
+/**
+  * @brief This function handles EXTI line[15:10] interrupts.
+  */
 void EXTI15_10_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI15_10_IRQn 0 */
@@ -155,6 +177,10 @@ void EXTI15_10_IRQHandler(void)
 /* USER CODE BEGIN 1 */
 
 // EXTI0 ISR — MCP2515 INT# pini (PB0)
+void EXTI0_IRQHandler(void)
+{
+  HAL_GPIO_EXTI_IRQHandler(MCP2515_INT_Pin);
+}
 
 // HAL GPIO EXTI ortak callback
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)

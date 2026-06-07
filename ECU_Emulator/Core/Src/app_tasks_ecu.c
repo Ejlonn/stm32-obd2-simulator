@@ -280,12 +280,37 @@ static void dashboard_update_oled(const SensorData_t *sensor,
 }
 #endif 
 
-// UART telemetri ekranı bas (VT100 escape kodları ile)
+// UART telemetri ekranı bas (VT100 escape kodları veya CSV ile)
 static void dashboard_update_uart(const SensorData_t *sensor,
                                    bool mil_on, uint8_t dtc_conf,
                                    uint8_t dtc_pend)
 {
     if (s_huart_dash == NULL) return;
+
+    static bool first_run = true;
+
+#if ENABLE_CSV_LOGGING
+    char buf[128];
+    int len;
+    
+    if (first_run) {
+        len = snprintf(buf, sizeof(buf), "Timestamp_ms,RPM,Gear,Speed_kmh,Coolant_C,Oil_C,MIL_ON,DTC_Count\r\n");
+        HAL_UART_Transmit(s_huart_dash, (uint8_t*)buf, len, 50);
+        first_run = false;
+    }
+    
+    len = snprintf(buf, sizeof(buf), "%lu,%u,%u,%u,%d,%d,%d,%u\r\n",
+                   HAL_GetTick(),
+                   sensor->rpm,
+                   SensorModel_GetGear(),
+                   sensor->vehicle_speed,
+                   sensor->coolant_temp,
+                   sensor->oil_temp,
+                   mil_on ? 1 : 0,
+                   dtc_conf + dtc_pend);
+    HAL_UART_Transmit(s_huart_dash, (uint8_t*)buf, len, 50);
+
+#else
 
     char buf[96];
     int len;
@@ -294,7 +319,6 @@ static void dashboard_update_uart(const SensorData_t *sensor,
     #define TX(s,l) HAL_UART_Transmit(s_huart_dash,(uint8_t*)(s),(l),50)
     #define TXS(s)  TX((s), sizeof(s)-1)
 
-    static bool first_run = true;
     if (first_run) {
         TXS("\033[2J");           
         first_run = false;
@@ -374,6 +398,7 @@ static void dashboard_update_uart(const SensorData_t *sensor,
 
     #undef TX
     #undef TXS
+#endif
 }
 
 // Dashboard Task — Periyodik OLED + UART telemetri güncellemesi
